@@ -1,4 +1,4 @@
-#Nginx 配置
+##Nginx 配置
     #运行用户
     #user somebody;
 
