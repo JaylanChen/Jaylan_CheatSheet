@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>绝对定位垂直居中</title>
+</head>
+<style>
+.container {
+        width: 500px;
+        height: 500px;
+        position: relative;
+
+        background-color: #ffcc24;
+    }
+    .absolute_center {
+        position:absolute;
+        width:200px;
+        height:200px;
+        top:0;
+        bottom:0;
+        left:0;
+        right:0;
+        margin:auto;
+        resize:both;/*用于设置了所有除overflow为visible的元素*/
+        overflow:auto;
+
+        background:#00ff55;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="absolute_center">
+         </div>
+    </div>
+</body>
+
+</html>
