@@ -1,4 +1,65 @@
+# 居中
+
 ## 水平居中
+
+### 1.行内元素水平居中
+
+    text-align:center;
+
+### 2.块级元素水平居中
+
+    /* 这里可以设置顶端外边距 */
+    margin: 0 auto;
+
+### 3.Flex
+
+    .parent {
+        display:flex;
+        justify-content:center;
+    }
+
+### 水平垂直居中：已知高度和宽度的元素解决方案1
+
+这是一种不常见的居中方法，可自适应，比方案2更智能，如下：
+
+.item{
+    position: absolute;
+    margin:auto;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+}
+
+### 水平垂直居中：已知高度和宽度的元素解决方案2
+
+    .item{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -75px;  /* 设置margin-left / margin-top 为自身高度的一半 */
+        margin-left: -75px;
+    }
+
+### 水平垂直居中：未知高度和宽度元素解决方案
+
+    .item{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);  /* 使用css3的transform来实现 */
+    }
+
+### 水平垂直居中：使用flex布局实现
+
+    .parent{
+        display: flex;
+        justify-content:center;
+        align-items: center;
+        /* 注意这里需要设置高度来查看垂直居中效果 */
+        background: #AAA;
+        height: 300px;
+    }
 
 ## 垂直居中
 
