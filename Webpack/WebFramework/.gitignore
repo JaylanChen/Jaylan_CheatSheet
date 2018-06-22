@@ -23,6 +23,7 @@ assets/
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log
+package-lock.json
 testem.log
 /typings
 
