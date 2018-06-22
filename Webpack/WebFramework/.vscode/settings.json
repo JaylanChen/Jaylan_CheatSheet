@@ -1,0 +1,10 @@
+{
+    "typescript.check.workspaceVersion": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "node_modules": true,
+        "dist": true,
+        "Properties": true
+    }
+}
