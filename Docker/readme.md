@@ -28,33 +28,47 @@ OPTIONS说明：
 
 ## docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
 OPTIONS说明：
+    -a, --attach=[]            登录容器（以docker run -d启动的容器）  
+    -c, --cpu-shares=0         设置容器CPU权重，在CPU共享场景使用  
+    --cap-add=[]               添加权限，权限清单详见：http://linux.die.net/man/7/capabilities  
+    --cap-drop=[]              删除权限，权限清单详见：http://linux.die.net/man/7/capabilities  
+    --cidfile=""               运行容器后，在指定文件中写入容器PID值，一种典型的监控系统用法  
+    --cpuset=""                设置容器可以使用哪些CPU，此参数可以用来容器独占CPU  
+    -d, --detach=false         指定容器运行于前台还是后台   
+    --device=[]                添加主机设备给容器，相当于设备直通  
+    --dns=[]                   指定容器的dns服务器  
+    --dns-search=[]            指定容器的dns搜索域名，写入到容器的/etc/resolv.conf文件  
+    -e, --env=[]               指定环境变量，容器中可以使用该环境变量  
+    --entrypoint=""            覆盖image的入口点  
+    --env-file=[]              指定环境变量文件，文件格式为每行一个环境变量  
+    --expose=[]                指定容器暴露的端口，即修改镜像的暴露端口  
+    -h, --hostname=""          指定容器的主机名  
+    -i, --interactive=false    打开STDIN，用于控制台交互  
+    --link=[]                  指定容器间的关联，使用其他容器的IP、env等信息  
+    --lxc-conf=[]              指定容器的配置文件，只有在指定--exec-driver=lxc时使用  
+    -m, --memory=""            指定容器的内存上限  
+    --name=""                  指定容器名字，后续可以通过名字进行容器管理，links特性需要使用名字  
+    --net="bridge"             指定容器的网络连接类型，支持 bridge/host/none/container: 四种类型 
+    -P, --publish-all=false    Docker 会随机映射一个 49000~49900 的端口到内部容器开放的网络端口。
+    -p, --publish=[]           (小写)指定要映射的IP和端口，一个端口上只可以绑定一个容器。支持的格式有:hostPort:containerPort、ip:hostPort:containerPort、 ip::containerPort
+    --privileged=false         指定容器是否为特权容器，特权容器拥有所有的capabilities  
+    --restart=""               指定容器停止后的重启策略，no：容器退出时不重启 on-failure：容器故障退出（返回值非零）时重启 always：容器退出时总是重启 
+    --rm=false                 指定容器停止后自动删除容器(不支持以docker run -d启动的容器)  
+    --sig-proxy=true           设置由代理接受并处理信号，但是SIGCHLD、SIGSTOP和SIGKILL不能被代理  
+    -t, --tty=false            分配tty设备，该可以支持终端登录  
+    -u, --user=""              指定容器的用户  
+    -v, --volume=[]            给容器挂载存储卷，挂载到容器的某个目录  
+    --volumes-from=[]          给容器挂载其他容器上的卷，挂载到容器的某个目录  
+    -w, --workdir=""           指定容器的工作目录  
 
-    -a stdin: 指定标准输入输出内容类型，可选 STDIN/STDOUT/STDERR 三项；
+## docker stop $(docker ps -a -q)
+停止所有镜像
 
-    -d: 后台运行容器，并返回容器ID；
+## docker rm $(docker ps -a -q)
+删除所有container
 
-    -i: 以交互模式运行容器，通常与 -t 同时使用；
+## docker rmi $(docker images -f "dangling=true" -q)
+移除 none 的镜像
 
-    -t: 为容器重新分配一个伪输入终端，通常与 -i 同时使用；
-
-    --name="nginx-lb": 为容器指定一个名称；
-
-    --dns 8.8.8.8: 指定容器使用的DNS服务器，默认和宿主一致；
-
-    --dns-search example.com: 指定容器DNS搜索域名，默认和宿主一致；
-
-    -h "mars": 指定容器的hostname；
-
-    -e username="ritchie": 设置环境变量；
-
-    --env-file=[]: 从指定文件读入环境变量；
-
-    --cpuset="0-2" or --cpuset="0,1,2": 绑定容器到指定CPU运行；
-
-    -m :设置容器使用内存最大值；
-
-    --net="bridge": 指定容器的网络连接类型，支持 bridge/host/none/container: 四种类型；
-
-    --link=[]: 添加链接到另一个容器；
-
-    --expose=[]: 开放一个端口或一组端口； 
+## docker rmi $(docker images -q)
+删除所有image
