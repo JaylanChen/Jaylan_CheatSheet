@@ -107,3 +107,39 @@
             #}
         }
     }
+
+## Demo
+
+### 反向代理
+
+    server {
+    listen       80;
+    server_name  front.jaylan.com;
+    location / {
+            proxy_pass http://localhost:8053;
+            proxy_set_header   Host    $host;
+            proxy_set_header   X-Real-IP   $remote_addr;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+
+### 负载均衡
+
+    upstream  www.jaylan.com   
+    {
+        server   10.0.1.50:8080;
+        server   10.0.1.51:8080;
+    }
+    
+    server
+    {
+        listen  80;
+        server_name  www.jaylan.com;
+    
+        location / {
+            proxy_pass        http://www.jaylan.com;
+            proxy_set_header   Host             $host;
+            proxy_set_header   X-Real-IP        $remote_addr;
+            proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        }
+    }
