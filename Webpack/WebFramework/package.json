@@ -4,12 +4,12 @@
   "description": "Web Framework base on node,express",
   "main": "./src/server.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=local ly-supervisor -i client -w routes -e 'js' --max-old-space-size=2048 --inspect=8161 ./src/server.js",
+    "start": "cross-env NODE_ENV=local supervisor -i client -w routes -e 'js' --max-old-space-size=2048 --inspect=8161 ./src/server.js",
     "dev:dll": "webpack --config ./build/webpack.dll.config.js",
     "dev": "cross-env NODE_ENV=dev node --inspect ./src/server.js",
-    "build:dev": "cross-env NODE_ENV=dev webpack --config ./build/webpack.prod.js",
+    "build:dev": "cross-env NODE_ENV=dev webpack --config ./build/webpack.config.production.js",
     "prod": "cross-env NODE_ENV=production node ./src/server.js",
-    "build:prod": "cross-env NODE_ENV=production webpack --config ./build/webpack.prod.js ",
+    "build:prod": "cross-env NODE_ENV=production webpack --config ./build/webpack.config.production.js ",
     "test": "cross-env NODE_ENV=local node ./src/test.js"
   },
   "keywords": [
