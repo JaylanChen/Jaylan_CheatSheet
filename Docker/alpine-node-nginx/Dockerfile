@@ -1,4 +1,15 @@
-FROM node:8.11.3-alpine
+FROM node:8-alpine
+
+# use USTC mirror
+RUN echo "https://mirrors.ustc.edu.cn/alpine/latest-stable/main/" > /etc/apk/repositories
+
+# update
+RUN apk update && apk upgrade 
+
+ENV TIME_ZONE Asia/Shanghai
+RUN apk add --no-cache tzdata
+RUN ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone
+RUN apk del tzdata
 
 ENV NGINX_VERSION 1.14.0
 
