@@ -81,7 +81,7 @@
 
             #静态文件，nginx自己处理
             location ~ ^/(images|javascript|js|css|flash|media|static)/ {
-                root D:\01_Workspace\Project\github\zp\SpringNotes\spring-security\spring-shiro\src\main\webapp\views;
+                root D:\Project\github\static;
                 #过期30天，静态文件不怎么更新，过期可以设大一点，如果频繁更新，则可以设置得小一点。
                 expires 30d;
             }
