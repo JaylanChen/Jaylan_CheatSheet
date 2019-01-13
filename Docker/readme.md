@@ -1,6 +1,46 @@
 # Docker
 
-# 常用命名
+## Docker 安装
+
+### 卸载旧版本
+```
+sudo apt-get remove docker docker-engine docker.io containerd runc
+```
+
+### 安装最新稳定版
+```
+sudo apt-get update
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo apt-key fingerprint 0EBFCD88
+    pub   4096R/0EBFCD88 2017-02-22
+          Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+    uid                  Docker Release (CE deb) <docker@docker.com>
+    sub   4096R/F273FCD8 2017-02-22
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt-get update
+
+sudo apt-get install docker-ce
+
+安装指定版本
+sudo apt-get install docker-ce=<VERSION>
+```
+
+
+# 常用命令
+## 官方文档
+https://docs.docker.com/engine/reference/commandline/docker/
 
 ## docker ps [OPTIONS]
 列出所有在运行的容器信息
@@ -25,6 +65,30 @@ OPTIONS说明：
     --format :指定返回值的模板文件；
     --no-trunc :显示完整的镜像信息；
     -q :只显示镜像ID。
+
+## docker build [OPTIONS] PATH | URL | -
+OPTIONS说明：
+    --build-arg=[] :设置镜像创建时的变量；
+    --cpu-shares :设置 cpu 使用权重；
+    --cpu-period :限制 CPU CFS周期；
+    --cpu-quota :限制 CPU CFS配额；
+    --cpuset-cpus :指定使用的CPU id；
+    --cpuset-mems :指定使用的内存 id；
+    --disable-content-trust :忽略校验，默认开启；
+    -f :指定要使用的Dockerfile路径；
+    --force-rm :设置镜像过程中删除中间容器；
+    --isolation :使用容器隔离技术；
+    --label=[] :设置镜像使用的元数据；
+    -m :设置内存最大值；
+    --memory-swap :设置Swap的最大值为内存+swap，"-1"表示不限swap；
+    --no-cache :创建镜像的过程不使用缓存；
+    --pull :尝试去更新镜像的新版本；
+    --quiet, -q :安静模式，成功后只输出镜像 ID；
+    --rm :设置镜像成功后删除中间容器；
+    --shm-size :设置/dev/shm的大小，默认值是64M；
+    --ulimit :Ulimit配置。
+    --tag, -t: 镜像的名字及标签，通常 name:tag 或者 name 格式；可以在一次构建中为一个镜像设置多个标签。
+    --network: 默认 default。在构建期间设置RUN指令的网络模式
 
 ## docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
 OPTIONS说明：
@@ -60,44 +124,50 @@ OPTIONS说明：
     -v, --volume=[]            给容器挂载存储卷，挂载到容器的某个目录  
     --volumes-from=[]          给容器挂载其他容器上的卷，挂载到容器的某个目录  
     -w, --workdir=""           指定容器的工作目录  
-
-## docker stop $(docker ps -a -q)
-停止所有镜像
-
-## docker rm $(docker ps -a -q)
-删除所有container
-
-## docker rmi $(docker images -f "dangling=true" -q)
-移除 none 的镜像
-
-## docker rmi $(docker images -q)
-删除所有image
+```
+示例
+docker run -d -p 5000:80 -v /var/www/App_Data:/app/App_Data -v /var/www/wwwroot:/app/wwwroot --restart=always --name $appName $appName:$tag
+```
 
 
-查看
+## docker stop <container>
+停止一个正在运行的容器，<container>可以是容器ID或名称
+```
+docker stop $(docker ps -a -q)    #停止所有镜像
+```
 
-docker images           # 列出所有镜像(images)
-docker ps               # 列出正在运行的容器(containers)
-docker ps -a            # 列出所有的容器
-docker pull centos      # 下载centos镜像
-docker top <container>  # 查看容器内部运行程序
+## docker start <container>
+启动一个已经停止的容器，<container>可以是容器ID或名称
 
-容器
+## docker restart <container>
+重启容器，<container>可以是容器ID或名称
 
-docker stop <container>                  # 停止一个正在运行的容器，<container>可以是容器ID或名称
-docker start <container>                 # 启动一个已经停止的容器
-docker restart <container>               # 重启容器
-docker rm <container>                    # 删除容器
+## docker rm <container>
+删除容器，<container>可以是容器ID或名称
+```
+docker rm $(docker ps -a | grep "Exited" | awk '{print $1 }')    #移除所有移除容器
+docker rm $(docker ps -a -q)    #移除所有容器
+```
 
-docker run -i -t -p :80 LAMP /bin/bash   # 运行容器并做http端口转发
-docker exec -it <container> /bin/bash    # 进入ubuntu类容器的bash
-docker exec -it <container> /bin/sh      # 进入alpine类容器的sh
+## docker rmi [OPTIONS] IMAGE [IMAGE...]
+OPTIONS说明：
+    -f :强制删除；
+    --no-prune :不移除该镜像的过程镜像，默认移除；
+```
+docker rmi $(docker images | grep "^<none>" | awk "{print $3}"    #移除为none的镜像
+docker rmi $(docker images -q)    #删除所有image
+```
 
-docker rm `docker ps -a -q`              # 删除所有已经停止的容器
-FOR /f "tokens=*" %i IN ('docker ps -a -q') DO docker rm %i  # windows系统，用上面的命令会出错：unknown shorthand flag: 'a' in -a 
-docker kill $(docker ps -a -q)           # 杀死所有正在运行的容器，$()功能同``
+## docker pull [OPTIONS] NAME[:TAG|@DIGEST]
+从镜像仓库中拉取或者更新指定镜像
 
-提交/导出
+## 进入容器内命令行
+```
+sudo docker exec -it <container> /bin/bash    # 进入ubuntu类容器的bash
+sudo docker exec -it <container> /bin/sh      # 进入alpine类容器的sh
+```
+
+#提交/导入导出
 
 docker build --rm=true -t hjue/lamp .    # 建立映像文件。–rm 选项是告诉Docker，在构建完成后删除临时的Container，Dockerfile的每一行指令都会创建一个临时的Container，一般这些临时生成的Container是不需要的
 docker commit 3a09b2588478 mynewimage    # 提交你的变更，并且把容器保存成镜像，命名为mynewimage，3a09b2588478为容器的ID
@@ -107,15 +177,6 @@ bzip2 -d -c < /home/save.tar.bz2 | docker load            # 加载 mynewimage �
 
 docker export <CONTAINER ID> > /home/export.tar           # 导出Image
 cat /home/export.tar | sudo docker import - mynewimage    # 导入Image镜像
-
-镜像
-
-docker run -i -t centos /bin/bash          # 运行centos镜像
-docker run -d -p 80:80 hjue/centos-lamp    # 运行centos-lamp镜像
-
-docker rmi [image-id]                      # 删除镜像
-docker rmi $(docker images -q)             # 删除所有镜像
-docker rmi $(sudo docker images --filter "dangling=true" -q --no-trunc)  # 删除无用镜像
 
 帮助
 
