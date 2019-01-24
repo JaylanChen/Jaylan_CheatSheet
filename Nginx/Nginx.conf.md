@@ -50,6 +50,7 @@ http {
         ##
 
         gzip on;
+        gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php application/vnd.ms-fontobject font/ttf font/opentype font/x-woff image/svg+xml;
 
         # gzip_vary on;
         # gzip_proxied any;
