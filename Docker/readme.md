@@ -186,3 +186,24 @@ docker run --help
 日志
 
 docker logs <container>
+
+
+## shell 示例
+```
+#!/bin/bash
+imagesName=$(date +"app-api-test:%Y%m%d%H%M")
+name="app-api"
+
+docker build -t $imagesName .
+if docker ps | grep $name | awk {'print $(NF)'} | grep -Fx $name; then
+    echo "Container mine is already start"
+    docker stop $name
+    docker rm $name
+	docker run -d -p 7166:80 --restart=always -v /home/api/API_Logs:/app/App_Data/Logs --name $name $imagesName
+else
+    echo "Container mine is not start!, starting"
+	docker run -d -p 7166:80 --restart=always -v /home/api/API_Logs:/app/App_Data/Logs --name $name $imagesName
+    echo "Finish starting"
+fi
+docker images | grep none | awk '{print $3}' | xargs docker rmi
+```
