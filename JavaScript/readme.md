@@ -92,3 +92,11 @@
             }
         }
     }
+
+## 数字格式化（每3位加逗号）
+
+    function formatNumber(str){
+        let reg = new RegExp(/(?<=\d)(?=(\d{3})+(\.\d+)?$)/,'g');
+        let i = str.indexOf('.');
+        return str.replace(reg,(...args)=>args[args.length-2]<i|i==-1?",":"");
+    }
