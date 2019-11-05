@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:lts-alpine
 
 # use USTC mirror
 RUN echo "https://mirrors.ustc.edu.cn/alpine/latest-stable/main/" > /etc/apk/repositories
@@ -11,7 +11,7 @@ RUN apk add --no-cache tzdata
 RUN ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone
 RUN apk del tzdata
 
-ENV NGINX_VERSION 1.14.0
+ENV NGINX_VERSION 1.16.1
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& CONFIG="\
