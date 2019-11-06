@@ -1,9 +1,7 @@
 FROM node:lts-alpine as build-stage
 
-ENV TIME_ZONE Asia/Shanghai
-RUN apk add --no-cache tzdata
-RUN ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone
-RUN apk del tzdata
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR /app
 COPY package*.json ./
@@ -15,10 +13,8 @@ RUN npm run build
 # production stage
 FROM nginx:stable-alpine as production-stage
 
-ENV TIME_ZONE Asia/Shanghai
-RUN apk add --no-cache tzdata
-RUN ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone
-RUN apk del tzdata
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.default.conf /etc/nginx/conf.d/default.conf

@@ -3,10 +3,8 @@ FROM node:lts-alpine
 # use USTC mirror
 RUN echo "https://mirrors.ustc.edu.cn/alpine/latest-stable/main/" > /etc/apk/repositories
 
-ENV TIME_ZONE Asia/Shanghai
-RUN apk add --no-cache tzdata
-RUN ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone
-RUN apk del tzdata
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # update
 RUN apk update && apk upgrade

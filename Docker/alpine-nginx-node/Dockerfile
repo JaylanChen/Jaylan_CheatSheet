@@ -1,6 +1,6 @@
-FROM nginx:1.14.0-alpine
+FROM nginx:stable-alpine
 
-ENV NODE_VERSION=v8.11.3
+ENV NODE_VERSION=v12.13.0
 ENV YARN_VERSION 1.7.0
 
 # install Node
