@@ -1,10 +1,3 @@
----
-tags: [Import-c13b]
-title: Webpack
-created: '2019-10-29T03:00:39.557Z'
-modified: '2019-11-27T07:53:11.062Z'
----
-
 # Webpack
 
 ## 概述
@@ -364,5 +357,133 @@ module.exports = {
 
     *AutoDllPlugin*： 自动将DLL包添加到自己的HTML中，依赖HtmlWebpackPlugin插件
 
++ HMR    热模块替换，提升开发体验
+  + 静态文件
+  ```
+  devServer: {
+      contentBase: './dist', // 将dist目录下的文件(index.html)作为可访问文件, 如果不写则默认与webpack.cofig.js的同级目录
+      host: '0.0.0.0', // 服务器外部可访问，默认localhost
+      port: 8080, // 端口号设为8080, 默认也是8080
+      hot: true // 模块热替换
+  }
+  ```
+
+  + Node
+  webpack-hot-middleware && webpack-dev-middleware
+  <br>
+  1. plugins: 添加插件 new webpack.HotModuleReplacementPlugin()
+  2. entry 加上 `webpack-hot-middleware/client?noInfo=true&reload=true` // 还可以添加其他参数
+  3. node server 添加中间件
+  ```
+  var webpack = require('webpack');
+  var webpackConfig = require('./webpack.config');
+  var compiler = webpack(webpackConfig);
   
+  app.use(require("webpack-dev-middleware")(compiler, {
+      noInfo: true, publicPath: webpackConfig.output.publicPath
+  }));
+
+  app.use(require("webpack-hot-middleware")(compiler));
+  ```
+
+## Babel
+  + 语法转换，如ES6 转 ES5
+  + 通过 Polyfill 方式在目标环境中添加缺失的特性
+  + 源码转换，如TypeScript 转 JS
+  + ...
+  <br>
+  [Babel配置](https://babeljs.io/docs/en/config-files#project-wide-configuration)
+  babel.config.js
+      ```
+      module.exports = function (api) {
+          api.cache(true);
+          return {
+              'presets': [],
+              'plugins': [ ]
+          };
+      };
+      ```
+  常用预配置 presets
+  * @babel/preset-env
+  * @babel/preset-typescript
+  * @babel/preset-react
+  ---
+  常用配置简介
+  - [@babel/preset-env](https://babeljs.io/docs/en/babel-preset-env)  默认转换所有ECMAScript 2015+代码,建议根据项目适当配置
+    <details>
+    <summary>@babel/preset-env</summary>
+    @babel/preset-env 会根据 browserlist 配置进行转换，如果需要兼容比较旧的浏览器，需要手动引入 @babel/polyfill
+    
+    **option**
+    * targets.esmodules:boolean = false
+    请注意：在指定 esmodules 目标时，将忽略 browserlists, 即 useBuiltIn 会失效，不转化 es6 语法也不 polyfill
+    如果 想用 esmodules 又需要 polyfill ，请组合使用 modules = false , useBuiltIn
+
+    * useBuiltIns = false
+    根据 browserlist 是否转换新语法与 polyfill 新 API
+        false : 不启用polyfill, 如果 import '@babel/polyfill', 会无视 browserlist 将所有的 polyfill 加载进来
+        entry : 启用，需要手动 import '@babel/polyfill', 这样会根据 browserlist 过滤出 需要的 polyfill
+        usage : 不需要手动import '@babel/polyfill'(加上也无妨，构造时会去掉), 且会根据 browserlist + 业务代码使用到的新 API 按需进行 polyfill
+    * modules = 'commonjs'
+    "amd" | "umd" | "systemjs" | "commonjs" | "cjs" | false, defaults to "commonjs".
+    转换 es6 模块语法到其他 模块规范， false不会转换
+    * include:Array<string|RegExp> = []
+    如果你 使用了某个新特性（如es6.array.from），无论browserslist 如何你都想 转化它， 则 include: ['es6.array.from']
+    * exclude:Array<string|RegExp> = []
+    同理
+    * loose = false(推荐)
+    loose mode
+    优势：代码更加简洁，更容易看懂，可能被老浏览器引擎执行得更快，兼容性更好。
+    缺点：当从 编译后的 es6 代码转换成 原生 es6 代码，有可能出现问题。这不值得冒险启用 loose
+    多数的 babel plugin 有两种模式，普通模式会将代码编译成尽可能接近 es6 语义，loose 模式则会将代码编译成 es5 风格。
+    forceAllTransforms = false
+    默认情况下， preset-env 会把根据 browserslist 进行有必要的 transform, 但是你可以强制所有 es6 语法都转换，通常用于 应用只支持 es5 的情况下。 此属性不影响 polyfill。
+    * configPath = process.cwd()
+    .browserslist(或 package.json->browserslist) 配置所在文件夹，根据此文件夹一直向父文件夹查找，直到找到配置文件
+    * ignoreBrowserslistConfig = false
+    忽略 .browserslist 配置
+    * shippedProposals = false
+    是否启用 还在提案中但已经被浏览器正式使用的新特性。如果你要支持的浏览器很新，已经支持了某些提案，可以启用这个选项，避免语法转换。 这个属性和 @babel/preset-stage-3 有所区别，stage-3 新特性在还未正式上线浏览器仍然有可能被修改变更的哦
+    </details>
+  - @babel/polyfill babel 7.4.0 开始已废弃，等同以下
+  ```
+  import "core-js/stable";
+  import "regenerator-runtime/runtime";
+  ```
+  - [@babel/plugin-transform-runtime](https://babeljs.io/docs/en/babel-plugin-transform-runtime)  分离辅助函数，提高代码复用性，减少文件体积；避免污染全局作用域（相比@babel/polyfill babel）
+    <details>
+    <summary>@babel/plugin-transform-runtime</summary>
+    <br>
+    *@babel/plugin-transform-runtime 不能单独使用，它需要指定 preset 为 es2015，env, typescript 还是 其他，才知道要转换的特性有哪些*
+    babel 在每个需要的文件的顶部都会插入一些 helpers 代码，这可能会导致多个文件都会有重复的 helpers 代码。
+    @babel/plugin-transform-runtime + @babel/runtime 可以避免编译构建时重复的 helper 代码
+  
+    此转换器的另一个目的是为您的代码创建沙盒环境。如果您使用@ babel / polyfill及其提供的内置函数（例如Promise，Set和Map），那些将污染全局范围。虽然这可能适用于应用程序或命令行工具，但如果您的代码是您打算发布供其他人使用的库，或者如果您无法准确控制代码运行的环境，则会出现问题。
+
+    适用于不需要修改 全局变量的工具/库，同时，适用这种方法也不会转换实例的方法（如：Array.prototype.includes）
+
+    PS: 为什么 transform-runtime 不会转换实例的方法呢？这是因为，前面讲到的transform-runtime是为代码创建沙盒环境，并不会污染全局，假如要转换'abc'.includes(xxx)，势必会重写 includes，和 transform-runtime 的初衷相悖。
+
+    有人又说了，通过自定义函数transformedIncludes('abc', xxx)不就行咯？要知道，js 是门动态语言，如果存在foo.includes('a')，你根本无法知道这里的 includes 到底是 String.prototype.includes , 还是 Array.prototype.includes，亦或是 自定义对象上的 includes 方法，自然无法 转换
+
+    那么，同样的限制，为啥子 @babel/preset-env 就能 polyfill includes 实例方法的呢？其实很简单粗暴，只要有变量出现 includes 方法, @babel/preset-env 会有杀错没放过，把 es6.string.include 和 es7.array.includes 都加载进来。
+
+    **option**
+
+    * corejs:boolean|number = false | 2
+    是否转化 内置函数(如：Promise, Set, Symbol) 或者 静态方法(如：Object.assign, Array.from)
+    * regenerator:boolean = true (推荐 true)
+    默认情况下回根据 browserslist 来确认是否转化 generator 函数 或 async 函数，如果 @babel/preset-env -> ignoreBrowserslistConfig = true 则都转换 generator 和 async 语法。
+    * helpers:boolean = true (推荐true)
+    是否将内联的 babel helpers 代码抽离到单独的 module 文件，避免内联的 helper 代码在多个文件重复出现。
+    * useESModules:boolean = false (推荐 true)
+    启用时将会加载 esModules 规范的 helpers 函数代码，这样webpack构建出来的代码会更小，因为这无需保留commonjs语义。
+    </details>
+
+  **PS**:
+  `useBuiltIns`和`transform-runtime`[不能同时使用，只能选其一](https://github.com/babel/babel/issues/9882)。
+  babel/polyfil一般用于前端项目，@babel/runtime一般用来写插件
+
+
+
 
