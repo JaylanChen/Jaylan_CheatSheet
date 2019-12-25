@@ -2,7 +2,7 @@
 
 ## 1. 原型链继承
 
-```
+```javascript
 function Animal(name) {
     this.name = name || 'Animal';
     this.foods = ['肉', '骨头', '馒头'];
@@ -34,17 +34,19 @@ console.log('dog1', dog1.foods);
 console.log('dog2', dog2.foods);
 ```
 
-**特点**：
+特点：
 
 1. 让新实例的原型等于父类的实例。
-   **缺点**：
+
+缺点：
+
 1. 引用类型的属性被所有实例共享
-1. 在创建 Child 的实例时， 不能向 Person 传参
-1. 继承单一。
+2. 在创建 Child 的实例时， 不能向 Person 传参
+3. 继承单一。
 
 ## 2. 借用构造函数继承
 
-```
+```javascript
 function Animal(name) {
     this.name = name || 'Animal';
     this.foods = ['肉', '骨头', '馒头'];
@@ -77,22 +79,22 @@ console.log('dog2', dog2.foods);
 ```
 
 用.call()和.apply()将父类构造函数引入子类函数（在子类函数中做了父类函数的自执行（复制））
-**特点**：
+特点：
 
 1. 只继承了父类构造函数的属性，没有继承父类原型的属性。
 2. 解决了原型链继承缺点 1、2、3。
 3. 可以继承多个构造函数属性（call 多个）。
 4. 在子实例中可向父实例传参。
-   **缺点**：
-5. 只能继承父类构造函数的属性。
-6. 无法实现构造函数的复用。（每次用每次都要重新调用）
-7. 每个新实例都有父类构造函数的副本，臃肿。
+
+缺点：
+
+1. 只能继承父类构造函数的属性。
+2. 无法实现构造函数的复用。（每次用每次都要重新调用）
+3. 每个新实例都有父类构造函数的副本，臃肿。
 
 ## 3. 组合继承（组合原型链继承和借用构造函数继承）
 
-**常用**
-
-```
+```javascript
 function Animal(name) {
     this.name = name || 'Animal';
     this.foods = ['肉', '骨头', '馒头'];
@@ -129,7 +131,7 @@ dog2.eat();
 
 ## 4. 原型式继承
 
-```
+```javascript
 function Animal(name) {
     this.name = name || 'Animal';
     this.foods = ['肉', '骨头', '馒头'];
@@ -164,7 +166,7 @@ dog1.sleep();
 
 ## 5. 寄生式继承
 
-```
+```javascript
 function Animal(name) {
     this.name = name || 'Animal';
     this.foods = ['肉', '骨头', '馒头'];
@@ -197,12 +199,16 @@ dog1.sleep();
 
 就是给原型式继承外面套了个壳子。
 优点：
+
 1. 没有创建自定义类型，因为只是套了个壳子返回对象（这个），这个函数顺理成章就成了创建的新对象。
+
 缺点：
-2. 没用到原型，无法复用。
+
+1. 没用到原型，无法复用。
 
 ## 6. 寄生组合式继承
-```
+
+```javascript
 function Animal(name) {
     this.name = name || 'Animal';
     this.foods = ['肉', '骨头', '馒头'];
@@ -237,5 +243,6 @@ dog1.sleep();
 dog1.eat();
 ```
 
-优点： 
+优点：
+
 1. 这种方式的高效率体现它只调用了一次Parent构造函数，并且因此避免了再Parent.prototype上面创建不必要的，多余的属性。普遍认为寄生组合式继承是引用类型最理想的继承方式
